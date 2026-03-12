@@ -3,8 +3,7 @@ Implémentation de la classe Agent :
  - Definir deux sous classe d'agent pour ceux en QLearning et ceux en stratégie prédéfinie
 
 Implémenation classe Game :
- - Génération d'identifiant unique à chaque partie pour chaque joueur
- - Algo de matching aléatoire à chaque tour
+ - En fonction des params de proportion de chaque comportement, faire une fonction de creation des joueurs
 
 Fichier stratégie :
  - Implémenter les première strats systématiques : Donnant-Donnant, Chasseur (coop et ensuite full trahison si trahi une fois)
