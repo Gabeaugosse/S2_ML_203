@@ -10,3 +10,10 @@ class Strategy(ABC) :
         pass
 
 
+class AlwaysCooperate(Strategy) :
+    def choose_action(self, my_id, other_player_id, interactions) -> str:
+        return "C"
+
+class AlwaysBetray(Strategy):
+    def choose_action(self, my_id, other_player_id, interactions) -> str:
+        return "B"
