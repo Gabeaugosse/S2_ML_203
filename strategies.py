@@ -64,3 +64,14 @@ class TitForTat(Strategy):
 
     def __str__(self) -> str:
         return "TitForTat"
+
+class SuspiciousTitForTat(Strategy):
+    def choose_action(self, my_id, other_player_id, interactions) -> str:
+        """Defects on the first round, then imitates opponent's previous move.
+        """
+        if other_player_id not in interactions or len(interactions[other_player_id]) == 0:
+            return "B"
+        return interactions[other_player_id][-1]["opponent_action"]
+
+    def __str__(self) -> str:
+        return "SuspiciousTitForTat"
