@@ -126,3 +126,17 @@ class Bully(Strategy):
 
     def __str__(self) -> str:
         return "Bully"
+
+class Joss(Strategy):
+    def choose_action(self, my_id, other_player_id, interactions) -> str:
+        """TFT with occasional random defections to exploit cooperative opponents.
+        """
+        if other_player_id not in interactions or len(interactions[other_player_id]) == 0:
+            return "C"
+        last_opponent_action = interactions[other_player_id][-1]["opponent_action"]
+        if last_opponent_action == "B":
+            return "B"
+        return random.choices(["C", "B"], weights=[1 - default_params.JOSS_P, default_params.JOSS_P])[0]
+
+    def __str__(self) -> str:
+        return f"Joss(p_betray={default_params.JOSS_P})"
