@@ -87,3 +87,17 @@ class TitForTwoTats(Strategy):
 
     def __str__(self) -> str:
         return "TitForTwoTats"
+
+class TwoTitsForTat(Strategy):
+    def choose_action(self, my_id, other_player_id, interactions) -> str:
+        """Defects twice after being defected against, otherwise cooperates.
+        """
+        if other_player_id not in interactions or len(interactions[other_player_id]) == 0:
+            return "C"
+        last_two = [r["opponent_action"] for r in interactions[other_player_id][-2:]]
+        if "B" in last_two:
+            return "B"
+        return "C"
+
+    def __str__(self) -> str:
+        return "TwoTitsForTat"
