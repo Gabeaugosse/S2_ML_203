@@ -75,3 +75,15 @@ class SuspiciousTitForTat(Strategy):
 
     def __str__(self) -> str:
         return "SuspiciousTitForTat"
+
+class TitForTwoTats(Strategy):
+    def choose_action(self, my_id, other_player_id, interactions) -> str:
+        """Defects only if opponent defected twice in a row.
+        """
+        if other_player_id not in interactions or len(interactions[other_player_id]) < 2:
+            return "C"
+        last_two = [r["opponent_action"] for r in interactions[other_player_id][-2:]]
+        return "B" if last_two == ["B", "B"] else "C"
+
+    def __str__(self) -> str:
+        return "TitForTwoTats"
