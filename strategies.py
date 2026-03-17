@@ -53,3 +53,14 @@ class ProbaCooperation(Strategy):
 
     def __str__(self) -> str:
         return f"ProbaCooperation(p={default_params.P_COOP})"
+
+class TitForTat(Strategy):
+    def choose_action(self, my_id, other_player_id, interactions) -> str:
+        """Cooperates on the first round, then imitates opponent's previous move.
+        """
+        if other_player_id not in interactions or len(interactions[other_player_id]) == 0:
+            return "C"
+        return interactions[other_player_id][-1]["opponent_action"]
+
+    def __str__(self) -> str:
+        return "TitForTat"

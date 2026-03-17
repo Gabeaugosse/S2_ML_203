@@ -42,8 +42,11 @@ class Game() :
             # print(player_1_gain,player_2_gain)
             
             # Update the logs and players history
-            player_1.update_interactions(p2, (first_player_action, second_player_action))
-            player_2.update_interactions(p1, (second_player_action, first_player_action))
+            player_1.update_interactions(p2, {"player_action" : first_player_action, 
+                                              "opponent_action" : second_player_action})
+            player_2.update_interactions(p1, {"player_action" : second_player_action, 
+                                              "opponent_action" : first_player_action})
+            
 
         
 
