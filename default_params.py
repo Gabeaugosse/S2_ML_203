@@ -3,9 +3,9 @@ GAIN_MATRIX = [[(3,3),(0,4)],
 
 ACTIONS_INDEX = {"C" : 0,
                  "B" : 1}
-NUM_PLAYERS = 7
+NUM_PLAYERS = 100
 
-NUM_TURNS = 1000
+NUM_TURNS = 500
 
 P_COOP = 0.7
 

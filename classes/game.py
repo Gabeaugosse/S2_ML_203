@@ -56,7 +56,6 @@ class Game() :
         pairs = list(combinations(self.players_indexes, 2))
         random.shuffle(pairs)
         for p1, p2 in pairs:
-            print(p1,p2)
             for _ in range(self.num_turns) :
                 self.play_match(p1,p2)
         
