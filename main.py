@@ -1,6 +1,7 @@
 from classes.game import Game
 import default_params
 import argparse
+from strategies import *
 
 def main() :
 
@@ -25,9 +26,18 @@ def main() :
     num_players = args.nb_players if args.nb_players is not None else default_params.NUM_PLAYERS
     num_turns   = args.nb_turns   if args.nb_turns   is not None else default_params.NUM_TURNS
 
-
+    strategy_mix = {
+    TitForTat:          0.00,
+    AlwaysCooperate:    0.5,
+    AlwaysBetray:       0.00,
+    RandomAction:       0.00,
+    Joss:               0.00,
+    Bully:              0.00,
+    TitForTwoTats:      0.5,
+}
     # Play the game
-    game = Game(num_players=num_players, num_turns=num_turns)
+    print(f"\nSimulation with {num_players} players who will play against each other {num_turns} times !\n")
+    game = Game(num_players=num_players, num_turns=num_turns, strategy_mix=strategy_mix)
     game.play()
     
 
