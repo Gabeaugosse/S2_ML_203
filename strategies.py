@@ -148,12 +148,17 @@ class Joss(Strategy):
 
 
 class QLearningStrategy(Strategy):
-    def __init__(self, alpha=0.1, gamma=0.9, epsilon=0.1):
-        self.alpha = alpha  # Learning rate
-        self.gamma = gamma  # Discount factor
-        self.epsilon = epsilon  # Exploration rate
-        self.q_table = defaultdict(float)  # Q-table: (state, action) -> value
-        self.last_state_action = {}  # Store last (state, action) per opponent
+    def __init__(self, alpha=0.1, gamma=0.9, epsilon=1.0, epsilon_min=0.01, epsilon_decay=0.9999):
+        self.alpha = alpha              # Learning rate
+        self.gamma = gamma              # Discount factor
+        self.epsilon = epsilon          # Current exploration rate (starts high)
+        self.epsilon_min = epsilon_min  # Minimum exploration rate
+        self.epsilon_decay = epsilon_decay  # Multiplicative decay factor per step
+        self.q_table = defaultdict(float)   # Q-table: (state, action) -> value
+        self.last_state_action = {}         # Store last (state, action) per opponent
+
+        # History for convergence plotting
+        self.history = {"q_betray": [], "q_coop": [], "epsilon_hist": [], "action": []}
 
     def _get_state(self, interactions, other_player_id):
         """Get current state based on opponent's last 2 actions."""
@@ -178,6 +183,17 @@ class QLearningStrategy(Strategy):
         
         # Store for update
         self.last_state_action[other_player_id] = (state, action)
+
+        # Record history for convergence plot
+        ref = ("C", "C")
+        self.history["q_betray"].append(self.q_table[(ref, "B")])
+        self.history["q_coop"].append(self.q_table[(ref, "C")])
+        self.history["epsilon_hist"].append(self.epsilon)
+        self.history["action"].append(action)
+
+        # Decay epsilon after each step
+        self.epsilon = max(self.epsilon_min, self.epsilon * self.epsilon_decay)
+
         return action
 
     def update_Q(self, other_player_id: str, my_action: str, opp_action: str, reward: int) -> None:
@@ -196,4 +212,4 @@ class QLearningStrategy(Strategy):
         self.q_table[(old_state, action_taken)] = new_q
 
     def __str__(self) -> str:
-        return f"QLearningStrategy(alpha={self.alpha}, gamma={self.gamma}, epsilon={self.epsilon})"
+        return f"QLearningStrategy(alpha={self.alpha}, gamma={self.gamma}, epsilon_start=1.0, epsilon_min={self.epsilon_min}, decay={self.epsilon_decay})"

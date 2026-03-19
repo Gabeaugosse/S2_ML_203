@@ -36,9 +36,18 @@ def main() :
     TitForTwoTats:      0,
     QLearningStrategy: 0.5
 }
+    # Q-Learning hyperparameters
+    ql_params = {
+        "alpha"         : 0.1,    # Learning rate
+        "gamma"         : 0.9,    # Discount factor
+        "epsilon"       : 1.0,    # Initial exploration rate
+        "epsilon_min"   : 0.01,   # Minimum exploration rate
+        "epsilon_decay" : 0.9999, # Multiplicative decay per step
+    }
+
     # Play the game
     print(f"\nSimulation with {num_players} players who will play against each other {num_turns} times !\n")
-    game = Game(num_players=num_players, num_turns=num_turns, strategy_mix=strategy_mix)
+    game = Game(num_players=num_players, num_turns=num_turns, strategy_mix=strategy_mix, ql_params=ql_params)
     game.play()
     
 

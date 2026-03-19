@@ -7,11 +7,13 @@ import random
 import math
 
 class Game() :
-    def __init__(self, num_players: int, num_turns: int, strategy_mix: dict):
+    def __init__(self, num_players: int, num_turns: int, strategy_mix: dict, ql_params: dict = None):
         """ strategy_mix : dict mapping Strategy -> proportion (float), must sum to 1.
+            ql_params    : dict of Q-Learning hyperparams (alpha, gamma, epsilon, epsilon_min, epsilon_decay).
         """
         self.num_players = num_players
         self.num_turns = num_turns
+        self.ql_params = ql_params or {}
 
         self.logs = [] # History of all interactions among the game
         self.players = self._init_players(strategy_mix)
@@ -41,7 +43,11 @@ class Game() :
             idx = 0
             for strategy, count in floor_counts.items():
                 for _ in range(count):
-                    players[idx] = Agent(idx, strategy)
+                    if strategy is QLearningStrategy:
+                        strategy_instance = strategy(**self.ql_params)
+                    else:
+                        strategy_instance = strategy()
+                    players[idx] = Agent(idx, strategy_instance)
                     idx += 1
 
             print("Start population :")
