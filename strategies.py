@@ -154,18 +154,21 @@ class QLearningStrategy(Strategy):
         self.epsilon = epsilon          # Current exploration rate (starts high)
         self.epsilon_min = epsilon_min  # Minimum exploration rate
         self.epsilon_decay = epsilon_decay  # Multiplicative decay factor per step
-        self.q_table = defaultdict(float)   # Q-table: (state, action) -> value
+        self.q_table: dict = defaultdict(float)   # Q-table: (state, action) -> value
         self.last_state_action = {}         # Store last (state, action) per opponent
 
         # History for convergence plotting
         self.history = {"q_betray": [], "q_coop": [], "epsilon_hist": [], "action": []}
 
     def _get_state(self, interactions, other_player_id):
-        """Get current state based on opponent's last 2 actions."""
+        """Get current state as (my_last_action, opp_last_action).
+        Including the agent's own last action lets it learn that
+        C->C leads to mutual cooperation, while B->B leads to punishment.
+        """
         if other_player_id not in interactions or len(interactions[other_player_id]) == 0:
-            return ()  # No history
-        opp_actions = [r["opponent_action"] for r in interactions[other_player_id]]
-        return tuple(opp_actions[-2:])  # Last 2 actions
+            return ()  # No history yet
+        last = interactions[other_player_id][-1]
+        return (last["player_action"], last["opponent_action"])  # (my last action, opp last action)
 
     def choose_action(self, my_id, other_player_id, interactions) -> str:
         state = self._get_state(interactions, other_player_id)
@@ -200,14 +203,13 @@ class QLearningStrategy(Strategy):
         if other_player_id not in self.last_state_action:
             return
         old_state, action_taken = self.last_state_action[other_player_id]
-        new_state = (old_state[1:] if len(old_state) == 2 else old_state) + (opp_action,)
-        if len(new_state) > 2:
-            new_state = new_state[-2:]
-        new_state = tuple(new_state)
+        # new_state must match the format returned by _get_state:
+        # (my_last_action, opp_last_action) — i.e. what just happened this turn.
+        new_state = (my_action, opp_action) if old_state else ()
         
         # Q-learning update
         old_q = self.q_table[(old_state, action_taken)]
-        max_next_q = max([self.q_table[(new_state, a)] for a in ["C", "B"]]) if new_state else 0
+        max_next_q = max(self.q_table[(new_state, a)] for a in ["C", "B"]) if new_state else 0
         new_q = old_q + self.alpha * (reward + self.gamma * max_next_q - old_q)
         self.q_table[(old_state, action_taken)] = new_q
 

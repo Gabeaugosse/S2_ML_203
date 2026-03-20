@@ -5,9 +5,9 @@ ACTIONS_INDEX = {"C" : 0,
                  "B" : 1}
 NUM_PLAYERS = 2
 
-NUM_TURNS = 80000
+NUM_TURNS = 150000
 
-P_COOP = 0.7
+P_COOP = 0.1
 
 JOSS_P = 0.1
 
