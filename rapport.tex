@@ -117,5 +117,43 @@ We compare its performance against a set of baseline strategies, ranging from na
 \tableofcontents
 \newpage
 
+\section{Introduction: The Prisoner's Dilemma}
+\label{sec:intro}
+%% ============================================================
+
+\subsection{Game description}
+
+The Prisoner's Dilemma is a symmetric two-player game popularised in the context of game theory by Robert Axelrod in 1984. At each round, two players simultaneously and independently choose between two actions: \textbf{cooperate} (C) or \textbf{betray} (B). The payoff matrix is defined as follows:
+
+\begin{table}[H]
+  \centering
+  \caption{Payoff matrix of the Prisoner's Dilemma (row = player 1, column = player 2).}
+  \label{tab:payoff}
+  \begin{tabular}{c|cc}
+    \toprule
+                   & \textbf{Cooperate (C)} & \textbf{Betray (B)} \\
+    \midrule
+    \textbf{Cooperate (C)} & $(3,\, 3)$ & $(0,\, 4)$ \\
+    \textbf{Betray (B)}    & $(4,\, 0)$ & $(1,\, 1)$ \\
+    \bottomrule
+  \end{tabular}
+\end{table}
+
+Those payoffs are defined such that they satisfy the following inequalities (as long as they do, the game is a Prisoner's Dilemma):
+
+\begin{equation}
+    T > R > P > S
+\end{equation}
+
+where
+
+\begin{itemize}
+    \item $T$ is the temptation to defect (4)
+    \item $R$ is the reward for mutual cooperation (3)
+    \item $P$ is the punishment for mutual defection (1)
+    \item $S$ is the sucker's payoff (0)
+\end{itemize}
+
+The structure of this game gives rise to a fundamental tension between individual rationality and collective optimum: \textbf{betraying is a strictly dominant strategy} as it yields a higher payoff regardless of the other player's action, yet if both players choose it, the outcome $(B, B) = (1,1)$ is Pareto-dominated by $(C, C) = (3,3)$.
 
 \end{document}
