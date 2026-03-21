@@ -168,7 +168,11 @@ This project will try to answer to the following question: \\
 \textit{Can an agent equipped with reinforcement learning (Q-learning) learn an effective strategy in the IPD, and under what conditions does it converge to cooperation or defection?}
 
 \subsection{Outline}
-The report is organised as follows. Section~\ref{sec:strategies} presents the full set of implemented strategies and the experimental framework. Section~\ref{sec:qlearning} describes the Q-learning model, its mathematical formulation, and the rationale for this choice. Section~\ref{sec:baselines} compares baseline strategy performance. Section~\ref{sec:hyperparams} analyses hyperparameter sensitivity. Section~\ref{sec:results} presents our experimental results and visualisations, and Section~\ref{sec:conclusion} concludes.
+In order to answer this question, we will first implement a Q-learning agent from scratch and confront it with a controlled set of opponents in a battle. Not taking into account any prior knowledge of the game, we observe and measure the agent's emergent behaviour : its cooperation rate, its exploitation of weak opponents, its response to punitive strategies, and compare these outcomes to the Nash equilibrium prediction. An analysis over the key hyperparameters of the model ($\alpha$, $\gamma$, $\varepsilon$) then allows us to highlight the role of each component of the learning rule.
+We shall then extend the analysis to multiple Q-learning agents interacting with each other, and observe the emergence of cooperation or defection in a mixed population.
+\\
+
+The report is organised as follows. Section~\ref{sec:strategies} presents the full set of implemented strategies and the experimental framework. Section~\ref{sec:qlearning} describes the Q-learning model, its mathematical formulation, and the rationale for this choice. Section~\ref{sec:baselines} compares baseline strategy performance. Section~\ref{sec:hyperparams} analyses hyperparameter sensitivity. Section~\ref{sec:results} presents our experimental results, and Section~\ref{sec:conclusion} concludes.
 
 \newpage
 
@@ -203,11 +207,52 @@ In order to test a learning agent, we implemented a set of strategies to play ag
   \item[\texttt{DiscriminatingAltruist}] Cooperates with any player who has never defected; otherwise refuses engagement.
   \item[\texttt{Bully}] Defects until the opponent defects, then cooperates. Exploits accommodating strategies.
 \end{description}
-
+\newpage
 %% 
 
 \section{The Q-Learning Model}
 \label{sec:qlearning}
+
+
+\subsection{Justification of choice}
+
+We wanted to analyse the Prisoner's Dilemma from a different perspective than the one of game theory. As part of the game theory, this obvioulsy a game. As such,
+an agent at each state of the game will earn a reward. From a machine learning perspective, this is a reinforcement learning problem. 
+Therefore, we could chose between different RL algorithms (SARSA, Deep Q-Network etc.). We chose Q-learning because it is a simple and efficient algorithm that can be used to solve this problem.\\
+
+Indeed, SARSA is an on-policy algorithm, which onverges to a different policy under continuous exploration; it is less suitable here since we wish to evaluate the optimal policy. On the other hand, Deep Q-Network is a more complex algorithm that requires more data to train. Here, the space is minimal, so we don't need to use a neural network to approximate the Q-values.\\
+
+
+Regarding the IDP and the Q-learning algorithm, we make the following assumptions:
+\begin{itemize}
+  \item \textbf{Suitability for discrete spaces}: the IPD has a finite, discrete state space (the memory is reduced to each player's last action) making the tabular representation (q-table) efficient.
+  \item \textbf{Off-policy}: the agent can learn the optimal policy even while exploring, which is relevant for the IPD where exploration allows testing the opponent's reactions.
+  \item \textbf{Guaranteed convergence} under standard conditions.
+\end{itemize}
+
+\subsection{Mathematical formulation}
+
+\paragraph{State space.}
+The state $s_t$ at time $t$ is the pair of actions from the previous round.
+
+\paragraph{Action space.}
+$\mathcal{A} = \{C, B\}$.
+
+\paragraph{Reward.}
+The immediate reward $r_t$ is the payoff matrix value obtained at round $t$ (cf.\ Table~\ref{tab:payoff}).
+
+\paragraph{Update rule (Bellman equation).}
+The Q-table is updated after each round according to:
+\begin{equation}
+  Q(s_t, a_t) \;\leftarrow\; Q(s_t, a_t) \;+\; \alpha \Bigl[r_t + \gamma \max_{a'} Q(s_{t+1}, a') - Q(s_t, a_t)\Bigr],
+  \label{eq:bellman}
+\end{equation}
+where $\alpha \in (0,1]$ is the learning rate and $\gamma \in [0,1)$ the discount factor (valuation of future rewards).
+
+\paragraph{$\varepsilon$-greedy policy.}
+The agent selects a random action with probability $\varepsilon$ (exploration) and the action with the highest Q-value with probability $1 - \varepsilon$ (exploitation). $\varepsilon$ decays multiplicatively at each step by a factor \texttt{epsilon\_decay}, down to a floor \texttt{epsilon\_min}.
+We could use a constant epsilon, but the goal is to learn the optimal policy, so we need to explore at the beginning and then exploit.
+
 
 \section{Comparison with Baseline Strategies}
 \label{sec:baselines}
