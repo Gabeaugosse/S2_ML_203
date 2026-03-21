@@ -58,6 +58,7 @@
 \usepackage{natbib}
 \bibliographystyle{plainnat}
 
+
 %% ---- Headers & footers ----
 \usepackage{fancyhdr}
 \pagestyle{fancy}
@@ -155,5 +156,36 @@ where
 \end{itemize}
 
 The structure of this game gives rise to a fundamental tension between individual rationality and collective optimum: \textbf{betraying is a strictly dominant strategy} as it yields a higher payoff regardless of the other player's action, yet if both players choose it, the outcome $(B, B) = (1,1)$ is Pareto-dominated by $(C, C) = (3,3)$.
+
+\subsection{The iterated version (IPD)}
+
+In the Iterated Prisoner's Dilemma (IPD), both players interact a large number of times. In the original version, they played 200 times. Here, we set $T = 500{,}000$ rounds for convergence purposes. The repetition of the game changes the analysis: the possibility of punishing past defection and rewarding past cooperation allows conditional strategies to establish themselves. Axelrod demonstrated empirically, through computer tournaments, that the \textit{Tit for Tat} strategy (cooperate on the first move, then mirror the opponent's previous action) achieves remarkable performance in an ecosystem of varied strategies. In fact, the strategy won in the two tournaments he organized.
+
+\subsection{Research question}
+
+This project will try to answer to the following question: \\
+
+\textit{Can an agent equipped with reinforcement learning (Q-learning) learn an effective strategy in the IPD, and under what conditions does it converge to cooperation or defection?}
+
+\subsection{Outline}
+The report is organised as follows. Section~\ref{sec:strategies} presents the full set of implemented strategies and the experimental framework. Section~\ref{sec:qlearning} describes the Q-learning model, its mathematical formulation, and the rationale for this choice. Section~\ref{sec:baselines} compares baseline strategy performance. Section~\ref{sec:hyperparams} analyses hyperparameter sensitivity. Section~\ref{sec:results} presents our experimental results and visualisations, and Section~\ref{sec:conclusion} concludes.
+
+\section{Experimental Framework and Strategy Set}
+\label{sec:strategies}
+
+\section{The Q-Learning Model}
+\label{sec:qlearning}
+
+\section{Comparison with Baseline Strategies}
+\label{sec:baselines}
+
+\section{Hyperparameter Sensitivity Analysis}
+\label{sec:hyperparams}
+
+\section{Experimental Results}
+\label{sec:results}
+
+\section{Conclusion}
+\label{sec:conclusion}
 
 \end{document}
