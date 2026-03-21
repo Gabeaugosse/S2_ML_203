@@ -95,5 +95,27 @@
 \begin{document}
 
 \maketitle
+\thispagestyle{empty}
+
+%% ---- Abstract ----
+\begin{abstract}
+
+Game theory provides a rigorous framework for analysing strategic interactions in which individual incentives diverge from collective welfare, 
+a tension that arises naturally in multi-agent systems like financial markets. 
+The Iterated Prisoner's Dilemma (IPD) is a canonical instance of this tension, and applying reinforcement learning to it allows us to study how adaptive agents 
+learn to navigate without any prior knowledge of the game structure.\\
+
+This report will go through the application of Q-learning to the IPD. 
+There are two objectives: first, to understand how a rational learning agent behaves when facing classical deterministic strategies; 
+second, to assess the relative importance of Q-learning hyperparameters : learning rate $\alpha$, discount factor $\gamma$, $\varepsilon$-greedy exploration policy.\\
+
+Our experiments show that a Q-learning agent converges to systematic defection when facing any player that do not punish defection, consistent with the dominant Nash equilibrium of the one-shot game. 
+We compare its performance against a set of baseline strategies, ranging from naive heuristics (\textit{Always Cooperate}, \textit{Always Defect}) to reactive strategies (\textit{Tit for Tat} and its variants), and discuss the conditions under which cooperation can or cannot emerge in a mixed population.
+\end{abstract}
+
+\newpage
+\tableofcontents
+\newpage
+
 
 \end{document}
