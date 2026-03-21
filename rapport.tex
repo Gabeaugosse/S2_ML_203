@@ -1,4 +1,99 @@
-\documentclass{article}
+%% ============================================================
+%%  Project Report — Machine Learning, Master 203, Dauphine
+%%  Iterated Prisoner's Dilemma & Q-Learning
+%% ============================================================
+
+\documentclass[11pt, a4paper]{article}
+
+%% ---- Encoding & language ----
+\usepackage[utf8]{inputenc}
+\usepackage[T1]{fontenc}
+\usepackage[english]{babel}
+
+%% ---- Page layout ----
+\usepackage{geometry}
+\geometry{top=2.5cm, bottom=2.5cm, left=2.5cm, right=2.5cm}
+\usepackage{setspace}
+\onehalfspacing
+
+%% ---- Typography ----
+\usepackage{lmodern}
+\usepackage{microtype}
+
+%% ---- Mathematics ----
+\usepackage{amsmath, amssymb, amsthm}
+\usepackage{mathtools}
+
+%% ---- Figures & tables ----
+\usepackage{graphicx}
+\usepackage{booktabs}
+\usepackage{array}
+\usepackage{caption}
+\usepackage{subcaption}
+\usepackage{float}
+
+%% ---- Colours & code ----
+\usepackage{xcolor}
+\usepackage{listings}
+\lstset{
+  basicstyle=\footnotesize\ttfamily,
+  keywordstyle=\color{blue},
+  commentstyle=\color{gray},
+  breaklines=true,
+  frame=single,
+  numbers=left,
+  numberstyle=\tiny\color{gray}
+}
+
+%% ---- Hyperlinks ----
+\usepackage{hyperref}
+\hypersetup{
+  colorlinks=true,
+  linkcolor=blue!70!black,
+  citecolor=green!50!black,
+  urlcolor=blue!80!black
+}
+
+%% ---- Bibliography ----
+\usepackage{natbib}
+\bibliographystyle{plainnat}
+
+%% ---- Headers & footers ----
+\usepackage{fancyhdr}
+\pagestyle{fancy}
+\fancyhf{}
+\rhead{Master 203 — Machine Learning}
+\lhead{Prisoner's Dilemma \& Q-Learning}
+\cfoot{\thepage}
+
+%% ---- Mathematical environments ----
+\newtheorem{definition}{Definition}[section]
+\newtheorem{proposition}{Proposition}[section]
+\newtheorem{remark}{Remark}[section]
+
+%% ============================================================
+%%  METADATA
+%% ============================================================
+
+\title{
+  \vspace{-1cm}
+  {\Large Project Report — Machine Learning}\\[0.4em]
+  {\LARGE \textbf{Reinforcement Learning in the Iterated Prisoner's Dilemma:}}\\[0.3em]
+  {\Large Convergence and Comparative Analysis of Strategies}
+}
+
+\author{
+  Gabriel \textsc{Tseng} \and
+  Axel \textsc{Rubio} \and
+  Benjamin \textsc{Krief} \and
+  Krea \textsc{Fares}\\[0.5em]
+  \small Master 203 — Université Paris-Dauphine\\
+  \small Machine Learning Course — \today
+}
+
+\date{}
 \begin{document}
-Test 
+
+\maketitle
+
 \end{document}
