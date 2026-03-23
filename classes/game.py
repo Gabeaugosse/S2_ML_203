@@ -1,7 +1,6 @@
 import default_params
 from classes.agent import Agent
 from strategies import *
-import utils
 from itertools import combinations
 import random
 import math
