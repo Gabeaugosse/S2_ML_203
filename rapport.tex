@@ -399,10 +399,40 @@ For our simulation, we choose a standard value of $\alpha = 0.1$, ensuring relia
 
 \subsection{Impact of $\gamma$, discount factor}
 
+The discount factor $\gamma$ determines the agent's horizon, controlling the importance of future rewards.
+A $\gamma$ of $0$ makes the agent only seeking to maximize the reward of the current turn, ignoring any future consequences. Conversely, a $\gamma$ close to $1$ implies that the agent values long-term cumulative returns almost as much as immediate pay-offs.
+Therefore, a high $\gamma$ allows the agent to grasp the delayed effects of its actions, while a low $\gamma$ restricts its optimization to the immediate step. \\
+In the Iterated Prisoner's Dilemma, $\gamma$ is the most critical parameter for the emergence of cooperation. It is pretty intuitive, if you have two agent facing each other and they know that they will not play together again, they will not have any incentive to cooperate. Conversely, if they know that they will play together again, they will have an incentive to cooperate. This incentive is all the more important that the number of remaining rounds is high. \\
 
+Because betraying always yields a higher immediate reward than cooperating ($4 > 3$), a myopic agent ($\gamma = 0$) will strictly prefer to defect.
+To mathematically calculate this threshold against \texttt{TitForTat}, it is the same as calculating future cashflows of a financial product to value it. We compare the sum of discounted rewards for always cooperating ($V_C$) and always betraying ($V_B$):
+\begin{equation*}
+    V_C = \sum_{t=0}^{\infty} 3\gamma^t = \frac{3}{1-\gamma}
+    \quad \text{and} \quad
+    V_B = 4 + \sum_{t=1}^{\infty} 1\gamma^t = 4 + \frac{\gamma}{1-\gamma}
+\end{equation*}
+For the agent to rationally prefer cooperation, we must have $V_C > V_B$, which yields:
+\begin{equation*}
+    \frac{3}{1-\gamma} > 4 + \frac{\gamma}{1-\gamma} \;\implies\; 3 > 4(1-\gamma) + \gamma \;\implies\; 3 > 4 - 3\gamma \;\implies\; \gamma > \frac{1}{3}
+\end{equation*}
+
+\begin{figure}[H]
+  \centering
+  \includegraphics[width=0.70\textwidth]{gamma_impact.png}
+  \caption{Impact of the discount factor ($\gamma$) on the cooperation rate against \texttt{TitForTat}. The gamma limit in theory is well found in our simulation.}
+  \label{fig:gamma_impact}
+\end{figure}
+
+For our simulation, we choose a high value of $\gamma = 0.9$, ensuring that the agent cares deeply about future interactions and is mathematically capable of establishing cooperative behaviors.
 
 \section{Experimental Results}
 \label{sec:results}
+
+\subsection{Two Q-learning agents}
+
+\subsection{Q-learning agents in a population of strategies}
+
+\subsection{Discussions}
 
 \section{Conclusion}
 \label{sec:conclusion}
