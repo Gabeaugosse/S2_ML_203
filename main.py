@@ -29,19 +29,19 @@ def main() :
 
     # Here insert the strategy mix as a proportion of the total number of players
     strategy_mix = {
-    TitForTat:          0.5,
+    TitForTat:          0,
     TwoTitsForTat:      0,
     TitForTwoTats:      0,
     SuspiciousTitForTat: 0,
     AlwaysCooperate:    0,
-    AlwaysBetray:       0,
+    AlwaysBetray:       0.8,
     RandomAction:       0,
     Joss:               0,
     DiscriminatingAltruist: 0,
     Bully:              0,
     ProbaCooperation:   0,
     
-    QLearningStrategy: 0.5
+    QLearningStrategy: 0.2
 }
     # Q-Learning hyperparameters
     ql_params = {
@@ -56,7 +56,7 @@ def main() :
     print(f"\nSimulation with {num_players} players who will play against each other {'{:.0f}'.format(num_turns)} times !\n")
     game = Game(num_players=num_players, num_turns=num_turns, strategy_mix=strategy_mix, ql_params=ql_params)
     game.play()
-    plot_convergence(game, num_turns)
+    #plot_convergence(game, num_turns)
     
 
 

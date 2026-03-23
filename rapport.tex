@@ -159,7 +159,7 @@ The structure of this game gives rise to a fundamental tension between individua
 
 \subsection{The iterated version (IPD)}
 
-In the Iterated Prisoner's Dilemma (IPD), both players interact a large number of times. In the original version, they played 200 times. Here, we set $T = 500{,}000$ rounds for convergence purposes. The repetition of the game changes the analysis: the possibility of punishing past defection and rewarding past cooperation allows conditional strategies to establish themselves. Axelrod demonstrated empirically, through computer tournaments, that the \textit{Tit for Tat} strategy (cooperate on the first move, then mirror the opponent's previous action) achieves remarkable performance in an ecosystem of varied strategies. In fact, the strategy won in the two tournaments he organized.
+In the Iterated Prisoner's Dilemma (IPD), both players interact a large number of times. In the original version, they played 200 times. Here, we set $T = 100{,}000$ rounds for convergence purposes. The repetition of the game changes the analysis: the possibility of punishing past defection and rewarding past cooperation allows conditional strategies to establish themselves. Axelrod demonstrated empirically, through computer tournaments, that the \textit{Tit for Tat} strategy (cooperate on the first move, then mirror the opponent's previous action) achieves remarkable performance in an ecosystem of varied strategies. In fact, the strategy won in the two tournaments he organized.
 
 \subsection{Research question}
 
@@ -181,7 +181,7 @@ The report is organised as follows. Section~\ref{sec:strategies} presents the fu
 
 \subsection{Simulator architecture}
 
-The simulator is built around three components: a \texttt{Strategy} (the decision rule), an \texttt{Agent} (a player carrying a strategy, a score, and a local interaction memory), and a \texttt{Game} (the orchestrator). At each round, both agents simultaneously submit an action to the \texttt{Game}, which resolves payoffs from the matrix (same as in \ref{tab:payoff}), updates scores, and writes the outcome to each agent's memory. All distinct agent pairs are played exhaustively for $T = 500{,}000$ rounds.
+The simulator is built around three components: a \texttt{Strategy} (the decision rule), an \texttt{Agent} (a player carrying a strategy, a score, and a local interaction memory), and a \texttt{Game} (the orchestrator). At each round, both agents simultaneously submit an action to the \texttt{Game}, which resolves payoffs from the matrix (same as in \ref{tab:payoff}), updates scores, and writes the outcome to each agent's memory. All distinct agent pairs are played exhaustively for $T = 100{,}000$ rounds.
 
 \subsection{Implemented strategies}
 
@@ -362,7 +362,7 @@ In this framework where we want to know if the agent is able to learn the optima
 Therefore, we choose to start with a high $\varepsilon$ and decrease it over time. \\
 
 Since the agent does not know anything at first, we need to start at \textbf{100\%} ($\varepsilon_0 = 0.0$ would be a random agent). For the lower bound, we want it to be small enough to ensure that the agent exploits the best strategies it has found at a late stage, while not being 0. The reason why is that it would get victimised too much against opponents like Joss who exploits static strategies.
-Lastly, we need to choose a decay rate. If it is too high, the agent might converge to a suboptimal strategy. If it is too low, the agent will still be exploring at the end of the game, which is not optimal. This parameter is related to the number of rounds (T=500,000) as we want it to be small after a certain number of rounds.  \\
+Lastly, we need to choose a decay rate. If it is too high, the agent might converge to a suboptimal strategy. If it is too low, the agent will still be exploring at the end of the game, which is not optimal. This parameter is related to the number of rounds (T=100,000) as we want it to be small after a certain number of rounds.  \\
 
 \begin{figure}[H]
   \centering
@@ -442,7 +442,8 @@ Now that we have set the parameters of our Q-learning agent, and have seen the r
 
 This is by far the most encouraging result we have obtained so far. The two agents start by exploring their environment, and then they start to converge to mutual cooperation. This is impressive as it shows that cooperation can emerge in a population of Q-learning agents without any prior knowledge. \\
 
-Through the different simulations we have run, we have seen that the cooperation rate always converges to a value close to 1 (the noise we see after corresponds to the exploration rate of both agents that can interfer with the optimal strategy). 
+Through the different simulations we have run, we have seen that the cooperation rate always converges to a value close to 1 (the noise we see after corresponds to the exploration rate of both agents that can interfer with the optimal strategy). \\
+
 Another intresting thing to notice is that the two agents always tend to not cooperate at the beginning of the simulation. On Figure~\ref{fig:convergence_2Q}, we can see that the two agents start by betraying each other. Just like for other simulations, once the exploration rate drops, the agents start to converge to mutual cooperation. This can be explained that having a non zero exploration rate and discovering the temporary higher reward of betraying, the agents will tend to betray each other. However, once the exploration rate drops, the agents will sharply converge to mutual cooperation. \\
 
 In our setup, it is also interesting to see that the convergence toward the optimal strategy takes approximately the same time ($\approx 30000$ turns). It is not necessarily straightforward as we could think in a first place that it would be faster against a pre-programmed strategy. This result highlights the crucial role of the exploration rate in the convergence of the Q-learning agents. \\
@@ -450,11 +451,55 @@ In our setup, it is also interesting to see that the convergence toward the opti
 \subsection{Q-learning agents in a population of strategies}
 \label{sec:ql_agents_population}
 
+As demonstrated in Section~\ref{sec:two_ql_agents}, mutual cooperation reliably emerges between two Q-learning agents. This leads to a canonical question in evolutionary game theory \citep{axelrod1984}: can cooperation be sustained in a hostile environment? While unconditional cooperators quickly go extinct when facing defectors, adaptive agents theoretically possess the behavioral flexibility to defend themselves while selectively cooperating with like-minded individuals. \\
+
+To test this hypothesis, we simulate a small population of 10 players, deliberately constructing a negative environment dominated by unconditionally defecting agents. The population consists of a majority of 7 \texttt{AlwaysBetray} agents and a minority of 3 \texttt{QLearningStrategy} agents. \\
+
+The final averaged scores across the 100,000 rounds (for each pair of agents) reveal that the Q-learning minority significantly outperforms the \texttt{AlwaysBetray} majority. This counter-intuitive success stems directly from the adaptive nature of Q-learning. Against the 7 defectors, the Q-learners rapidly learn to protect themselves by defecting in return, securing the mutual defection payoff ($P=1$). However, when paired against the other 2 Q-learners in the population, they successfully converge toward mutual cooperation, earning the higher reward ($R=3$). \\
+
+\begin{table}[H]
+  \centering
+  \caption{Average final scores per round in a mixed population (3 \texttt{QLearning}, 7 \texttt{AlwaysBetray}).}
+  \label{tab:population_scores}
+  \begin{tabular}{lc}
+    \toprule
+    \textbf{Strategy} & \textbf{Average Score / Round} \\
+    \midrule
+    \texttt{QLearningStrategy} & 924 653  \\
+    \texttt{AlwaysBetray}      & 908 616 \\
+    \bottomrule
+  \end{tabular}
+\end{table}
+
+
+This result highlights a fundamental property of multi-agent reinforcement learning in social dilemmas: even when placed in a predominantly negative environment, a minority of adaptive agents can prosper.\\
+
+Having only 30\% of Q-learning agents in the population is enough to make them prosper. Finally, this experiment takes places is the most hostile possible environment, the final score would be even higher with more rounds, more Q-learning agents, or a less hostile environment. \\
+\newpage
 \subsection{Discussions}
 \label{sec:discussions}
 
+While our results demonstrate the robust capability of Q-learning in the Iterated Prisoner's Dilemma, there are several limitations to our study that are worth discussing. \\
+
+First, our model relies on a highly restricted state space representation. We assumed that the state of the game can be fully described by the actions played in the immediately preceding round (a memory of size one). This makes tabular computation extremely efficient and allows for fast convergence. However, it severely limits the agent's capacity to recognize and adapt to more complex strategies that operate over longer time horizons.\\ 
+
+Second, the standard Q-learning algorithm assumes a stationary environment. When a Q-learning agent plays against another learning agent, the environment becomes non-stationary because the opponent's policy is continuously evolving. Although our empirical results show that the agents manage to converge to mutual cooperation, the theoretical guarantees of standard Q-learning convergence do not strictly apply in such settings.\\
+
+Third, our reward framework only assumes rational self-interest. The Bellman equation is parameterized solely to maximize the agent's own cumulative discounted payoff. While this fits classical game theory, it breaks away from behavioral economics findings, which show that humans often possess "other-regarding preferences"---valuing fairness, equity, or collective welfare. By optimizing strictly for personal gain, our agent may not be reflecting the human behavior that we want to model.
+
+
 \section{Conclusion}
 \label{sec:conclusion}
+
+This project confirmed that an agent equipped with Q-learning can autonomously learn highly effective strategies in the Iterated Prisoner's Dilemma, without any prior knowledge of the game's payoffs. Our key findings are:
+
+\begin{itemize}
+    \item \textbf{Exploitation of naive agents:} The Q-learner successfully converges to the Nash equilibrium of systematic defection against opponents that do not punish betrayal.
+    \item \textbf{Emergence of cooperation:} Mutual cooperation emerges against reactive strategies like \texttt{TitForTat}, provided the agent values future interactions ($\gamma > \frac{1}{3}$) and explores sufficiently slowly.
+    \item \textbf{Spontaneous mutual cooperation:} Two independent Q-learning agents playing against each other reliably discover and converge to mutual cooperation from scratch.
+    \item \textbf{Resilience in hostile environments:} Even when heavily outnumbered by unconditional defectors, a minority of Q-learning agents prospers by dynamically adapting: they defect to defend against hostile agents, while maintaining rewarding cooperation among themselves.
+\end{itemize}
+
 
 %% ---- References ----
 \newpage

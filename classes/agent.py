@@ -19,8 +19,6 @@ class Agent() :
 
         self.interactions = {} # At first, the agent met no one. Then store each result of its interactions with other agent. (Only access to its own results)
         self.score = 0 # Null score at the beginning (consider starting with non null)
-
-        self.social_score = 0 # For later with altruist punition and social ranking
     
     def update_score(self, change : int) -> None :
         """ After an interaction with another agent, update its score 
