@@ -14,6 +14,15 @@ rapport.blg
 rapport.out
 rapport.toc
 rapport.pdf
+presentation.aux
+presentation.fdb_latexmk
+presentation.fls
+presentation.nav
+presentation.out
+presentation.toc
+presentation.snm
+presentation.synctex.gz
+
 # Distribution / packaging
 .Python
 build/
