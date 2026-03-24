@@ -220,7 +220,7 @@ We wanted to analyse the Prisoner's Dilemma from a different perspective than th
 an agent at each state of the game will earn a reward. From a machine learning perspective, this is a reinforcement learning problem. 
 Therefore, we could chose between different RL algorithms (SARSA, Deep Q-Network etc.). We chose Q-learning because it is a simple and efficient algorithm that can be used to solve this problem.\\
 
-Indeed, SARSA is an on-policy algorithm, which onverges to a different policy under continuous exploration; it is less suitable here since we wish to evaluate the optimal policy. On the other hand, Deep Q-Network is a more complex algorithm that requires more data to train. Here, the space is minimal, so we don't need to use a neural network to approximate the Q-values.\\
+Indeed, SARSA is an on-policy algorithm, which converges to a different policy under continuous exploration; it is less suitable here since we wish to evaluate the optimal policy. On the other hand, Deep Q-Network is a more complex algorithm that requires more data to train. Here, the space is minimal, so we don't need to use a neural network to approximate the Q-values.\\
 
 
 Regarding the IDP and the Q-learning algorithm, we make the following assumptions:
@@ -259,14 +259,13 @@ We could use a constant epsilon, but the goal is to learn the optimal policy, so
 
 \subsection{Evaluation framework}
 
-% TODO: describe the simulation protocol (number of players, rounds, pairs, metrics)
-
 Strategies are evaluated on several metrics computed at the end of the simulation:
 \begin{itemize}
   \item \textbf{Cooperation rate}: proportion of C moves played by the agent;
   \item \textbf{Exploitation rate} (defecting when the opponent cooperates);
   \item \textbf{Victimisation rate} (cooperating when the opponent defects);
   \item \textbf{Mutual cooperation rate}: proportion of $(C, C)$ rounds.
+  \item \textbf{Mutual defection rate}: proportion of $(B, B)$ rounds.
 \end{itemize}
 
 \subsection{Comparative results}
@@ -288,15 +287,15 @@ For the first presented results, we chose the following set of parameters (the m
   \centering
   \caption{Behavioural summary of the Q-learning agent against naive strategies.}
   \label{tab:results}
-  \begin{tabular}{lrrrr}
+  \begin{tabular}{lrr||rrrr}
     \toprule
-    Strategy & Coop. & Exploit. & Victimised & Mut.C \\
+    Strategy & Defect. & Coop. & Exploit. & Victimised & Mut.C & Mut.D\\
     \midrule
-    % TODO: paste rows from the simulation output
-    AlwaysCooperate     & 1.4\% & 98.6\% & 0\% & 1.4\%  \\
-    AlwaysBetray        & 1.4\% & 0\% & 1.4\% & 0\%  \\
-    RandomAction        & 2.6\% & 48.7\% & 1.3\% & 1.3\%  \\
-    ProbaCooperation(p=0.7)    & 2.5\% & 68.2\% & 0.8\% & 1.8\%  \\
+    
+    AlwaysCooperate     & 98.6 \% & 1.4\% & 98.6\% & 0\% & 1.4\% & 0.0\%  \\
+    AlwaysBetray        & 98.6 \%& 1.4\% & 0\% & 1.4\% & 0\% & 98.6\%  \\
+    RandomAction        & 97.4 \%& 2.6\% & 48.7\% & 1.3\% & 1.3\% & 48.7\%  \\
+    ProbaCooperation(p=0.7)   & 97.5 \% & 2.5\% & 68.2\% & 0.8\% & 1.8\% & 29.2\%  \\
     \bottomrule
   \end{tabular}
 \end{table}
@@ -308,7 +307,7 @@ Against \texttt{AlwaysBetray}, the agent reciprocates by defecting as well, conv
 
 Notably, the exploitation rate is closely related to the opponent's cooperation probability: $\approx 48.7\%$ against \texttt{RandomAction} ($p=0.5$) and $\approx 68.2\%$ against \texttt{ProbaCooperation} ($p=0.7$), confirming that the agent has learned to consistently defect.\\
 
-The conclusion of this first part is that cooperation cannot arise againt naive strategies : \textbf{defection must be punished and cooperation must be rewarded}.
+The conclusion of this first part is that cooperation cannot arise against naive strategies: \textbf{defection must be punished and cooperation must be rewarded}.
 
 \begin{figure}[H]
   \centering
@@ -324,18 +323,18 @@ The conclusion of this first part is that cooperation cannot arise againt naive 
   \centering
   \caption{Behavioural summary of the Q-learning agent against reactive strategies.}
   \label{tab:results2}
-  \begin{tabular}{lrrrr}
+  \begin{tabular}{lrr||rrrrrr}
     \toprule
-    Strategy & Coop. & Exploit. & Victimised & Mut.C \\
+    Strategy & Defect. & Coop. & Exploit. & Victimised & Mut.C & Mut.D \\
     \midrule
-    % TODO: paste rows from the simulation output
-    TitForTat    & 98.6\% & 1.2\% & 1.2\% & 97.4\%  \\
-    SuspiciousTitForTat & 98.6\% & 1.2\% & 1.2\% & 97.4\%  \\
-    TwoTitsForTat & 98.5\% & 1.0\% & 2.2\% & 96.3\%  \\
-    Joss & 98.4\% & 1.2\% & 11.0\% & 87.4\%  \\
-    TitForTwoTats & 50\% & 49.8\% & 0.7\% & 49.3\%  \\
-    DiscriminatingAltruist & 1.5\% & 0.0\% & 1.5\% & 0.0\%  \\
-    Bully & 1.4\% & 97.4\% & 0.3\% & 1.2\%  \\
+    
+    TitForTat              & 1.4\%  & 98.6\% & 1.2\% & 1.2\% & 97.4\% & 0.2\% \\
+    SuspiciousTitForTat    & 1.4\%  & 98.6\% & 1.2\% & 1.2\% & 97.4\% & 0.2\% \\
+    TwoTitsForTat          & 1.5\%  & 98.5\% & 1.0\% & 2.2\% & 96.3\% & 0.5\% \\
+    Joss                   & 1.6\%  & 98.4\% & 1.2\% & 11.0\% & 87.4\% & 0.4\% \\
+    TitForTwoTats          & 50.0\% & 50.0\% & 49.8\% & 0.7\% & 49.3\% & 0.2\% \\
+    DiscriminatingAltruist & 98.5\% & 1.5\%  & 0.0\% & 1.5\% & 0.0\% & 98.5\% \\
+    Bully                  & 98.6\% & 1.4\%  & 97.4\% & 0.3\% & 1.2\% & 1.1\% \\
     \bottomrule
   \end{tabular}
 \end{table}
@@ -343,7 +342,7 @@ The conclusion of this first part is that cooperation cannot arise againt naive 
 Analysing the results, we can see that DiscriminatingAltruist and Bully are the only strategies that do not lead to cooperation. From this, we can deduce that in order for cooperation to arise, the agent must be able to react both to defection and cooperation.
 These two fails as they tend to not be "forgiving" and "retaliating" enough. Here again, the agent converges to defection. \\
 
-When it comes for TitForTat and its variants, the Q-learning agent manages to cooperate with them. 
+When it comes to TitForTat and its variants, the Q-learning agent manages to cooperate with them. 
 The first interesting case is against TitForTwoTats : the agent manages to cooperate with it, but only 50\% of the time. 
 This strategy is more forgiving than the others, we can see through the results that the agent understood its opponent strategy and exploited it by defecting as much as possible but not twice in a row (50\% cooperation, 0.7\% victimised). \\
 
@@ -358,7 +357,7 @@ Note that since our state space is limited to the last action of each player, th
 
 Finally, we got the the strategies that applies the "Eye for an eye" rule. All those strategies lead to cooperation from the agent. This is conclusive with the theory, as it is intuitive that the agent should cooperate with strategies that cooperate with it, and defect it when it defects them (on the long run, you prefer to get 3 points every turn rather than 1).\\
 
-Notably, we see that overpunishing strategies (or just less forgiving strategies) such as Joss and TwoTitsForTat lead to less cooperation. The agent tends to cooperate marginally less but get victimised more often. The Q-learning agent adapts its q-table depending on the it's own actions and the opponent's reactions. Therefore, once it's politics has converged, Joss can easily exploit it as it tends to defect marginally, which is not going to be punished by the agent. \\ 
+Notably, we see that overpunishing strategies (or just less forgiving strategies) such as Joss and TwoTitsForTat lead to less cooperation. The agent tends to cooperate marginally less but get victimised more often. The Q-learning agent adapts its q-table depending on the it's own actions and the opponent's reactions. Therefore, once its politics has converged, Joss can easily exploit it as it tends to defect marginally, which is not going to be punished by the agent. \\ 
 
 We deduce that the Q-learning agent is able to learn the optimal strategy and that cooperation can arise and be maximised with strategies following conditions : \textbf{able to react both to defection and cooperation, "forgiving" and "retaliating" enough, and not overpunishing}. \\
 
@@ -516,8 +515,6 @@ This project confirmed that an agent equipped with Q-learning can autonomously l
     \item \textbf{Resilience in hostile environments:} Even when heavily outnumbered by unconditional defectors, a minority of Q-learning agents prospers by dynamically adapting: they defect to defend against hostile agents, while maintaining rewarding cooperation among themselves.
 \end{itemize}
 
-
-%% ---- References ----
 \newpage
 \bibliography{references}
 
