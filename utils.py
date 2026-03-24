@@ -290,12 +290,9 @@ def plot_convergence(game, num_turns: int, output_path: str = "convergence.png")
     turns = np.arange(1, T + 1)
 
     window = max(200, T // 100)
-    coop_bin  = np.array([1 if a == "C" else 0 for a in hist["action"]], dtype=float)
-    coop_rate = np.convolve(coop_bin, np.ones(window) / window, mode="valid")
+    coop_bin   = np.array([1 if a == "C" else 0 for a in hist["action"]], dtype=float)
+    coop_rate  = np.convolve(coop_bin, np.ones(window) / window, mode="valid")
     turns_roll = turns[window - 1:]
-
-    color_coop = "#2A9D8F"
-    color_eps  = "#457B9D"
 
     fig, ax = plt.subplots(figsize=(12, 5))
     fig.suptitle(
@@ -305,11 +302,12 @@ def plot_convergence(game, num_turns: int, output_path: str = "convergence.png")
         fontsize=13, fontweight="bold"
     )
 
-    ax.plot(turns_roll, coop_rate, color=color_coop, lw=1.5,
+    ax.plot(turns_roll, coop_rate, color="steelblue", lw=1.5,
             label=f"Cooperation rate (window={window})")
-    ax.axhline(0.0, color=color_coop, lw=0.8, ls="--", alpha=0.5, label="Full defection baseline")
-    ax.set_ylabel("Cooperation rate", color=color_coop)
-    ax.tick_params(axis="y", labelcolor=color_coop)
+    ax.axhline(0.0, color="steelblue", lw=0.8, ls="--", alpha=0.5,
+               label="Full defection baseline")
+    ax.set_ylabel("Cooperation rate", color="steelblue")
+    ax.tick_params(axis="y", labelcolor="steelblue")
     ax.set_ylim(-0.05, 1.15)
     ax.yaxis.set_major_formatter(mticker.PercentFormatter(xmax=1))
     ax.set_xlabel("Turn")
@@ -317,12 +315,12 @@ def plot_convergence(game, num_turns: int, output_path: str = "convergence.png")
     ax.grid(True, alpha=0.3)
 
     ax2 = ax.twinx()
-    ax2.plot(turns, hist["epsilon_hist"], color=color_eps, lw=1, alpha=0.7, label="ε (exploration rate)")
-    ax2.set_ylabel("ε", color=color_eps)
-    ax2.tick_params(axis="y", labelcolor=color_eps)
+    ax2.plot(turns, hist["epsilon_hist"], color="tomato", lw=1, alpha=0.7,
+             label="ε (exploration rate)")
+    ax2.set_ylabel("ε", color="tomato")
+    ax2.tick_params(axis="y", labelcolor="tomato")
     ax2.set_ylim(-0.05, 1.15)
 
-    # Merge legends
     lines1, labels1 = ax.get_legend_handles_labels()
     lines2, labels2 = ax2.get_legend_handles_labels()
     ax.legend(lines1 + lines2, labels1 + labels2, loc="upper right", fontsize=9)
