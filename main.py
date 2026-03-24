@@ -2,6 +2,7 @@ from classes.game import Game
 import default_params
 import argparse
 from strategies import *
+from utils import *
 
 def main():
 
@@ -33,14 +34,14 @@ def main():
     TitForTwoTats:      0,
     SuspiciousTitForTat: 0,
     AlwaysCooperate:    0,
-    AlwaysBetray:       0.8,
+    AlwaysBetray:       0,
     RandomAction:       0,
     Joss:               0,
     DiscriminatingAltruist: 0,
     Bully:              0,
     ProbaCooperation:   0,
     
-    QLearningStrategy: 0.2
+    QLearningStrategy: 1
 }
     # Q-Learning hyperparameters
     ql_params = {
@@ -55,9 +56,10 @@ def main():
     print(f"\nSimulation with {num_players} players who will play against each other {'{:.0f}'.format(num_turns)} times !\n")
     game = Game(num_players=num_players, num_turns=num_turns, strategy_mix=strategy_mix, ql_params=ql_params)
     game.play()
-    
+    plot_convergence(game, num_turns)
 
 
 
 if __name__ == "__main__":
     main()
+    #plot_epsilon_decay()

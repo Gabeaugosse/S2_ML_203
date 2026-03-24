@@ -2,6 +2,7 @@ import matplotlib
 matplotlib.use('Agg')
 import matplotlib.pyplot as plt
 import matplotlib.cm as cm
+import matplotlib.ticker as mticker
 import numpy as np
 import os
 import default_params
@@ -236,7 +237,7 @@ def plot_gamma_impact(num_turns=100_000, output_path="img/gamma_impact.png"):
 # 6. Epsilon decay impact
 # ─────────────────────────────────────────────
 
-def plot_epsilon_decay(num_turns=None, output_path="img/epsilon_decay.png"):
+def plot_epsilon_decay(num_turns=100_000, output_path="img/epsilon_decay.png"):
     """
     Plot the impact of epsilon decay on QL convergence against TitForTat.
     """
@@ -269,3 +270,64 @@ def plot_epsilon_decay(num_turns=None, output_path="img/epsilon_decay.png"):
     plt.savefig(output_path, dpi=150, bbox_inches="tight")
     print(f"\nSaved {os.path.abspath(output_path)}")
     plt.close(fig)
+
+def plot_convergence(game, num_turns: int, output_path: str = "convergence.png") -> None:
+    """
+    Generate and save a single-panel figure illustrating the convergence of the
+    Q-learning agent, showing the rolling cooperation rate alongside the exploration rate.
+    """
+    ql_agents = [
+        agent for agent in game.players.values()
+        if isinstance(agent.get_strategy(), QLearningStrategy)
+    ]
+    if not ql_agents:
+        print("No Q-learning agent found; figure not generated.")
+        return
+
+    strat = ql_agents[0].get_strategy()
+    hist  = strat.history
+    T     = len(hist["action"])
+    turns = np.arange(1, T + 1)
+
+    window = max(200, T // 100)
+    coop_bin  = np.array([1 if a == "C" else 0 for a in hist["action"]], dtype=float)
+    coop_rate = np.convolve(coop_bin, np.ones(window) / window, mode="valid")
+    turns_roll = turns[window - 1:]
+
+    color_coop = "#2A9D8F"
+    color_eps  = "#457B9D"
+
+    fig, ax = plt.subplots(figsize=(12, 5))
+    fig.suptitle(
+        "Convergence of the Q-agent — cooperation rate\n"
+        f"(α={strat.alpha}, γ={strat.gamma}, "
+        f"ε_min={strat.epsilon_min}, decay={strat.epsilon_decay})",
+        fontsize=13, fontweight="bold"
+    )
+
+    ax.plot(turns_roll, coop_rate, color=color_coop, lw=1.5,
+            label=f"Cooperation rate (window={window})")
+    ax.axhline(0.0, color=color_coop, lw=0.8, ls="--", alpha=0.5, label="Full defection baseline")
+    ax.set_ylabel("Cooperation rate", color=color_coop)
+    ax.tick_params(axis="y", labelcolor=color_coop)
+    ax.set_ylim(-0.05, 1.15)
+    ax.yaxis.set_major_formatter(mticker.PercentFormatter(xmax=1))
+    ax.set_xlabel("Turn")
+    ax.set_title("Agent behaviour over time")
+    ax.grid(True, alpha=0.3)
+
+    ax2 = ax.twinx()
+    ax2.plot(turns, hist["epsilon_hist"], color=color_eps, lw=1, alpha=0.7, label="ε (exploration rate)")
+    ax2.set_ylabel("ε", color=color_eps)
+    ax2.tick_params(axis="y", labelcolor=color_eps)
+    ax2.set_ylim(-0.05, 1.15)
+
+    # Merge legends
+    lines1, labels1 = ax.get_legend_handles_labels()
+    lines2, labels2 = ax2.get_legend_handles_labels()
+    ax.legend(lines1 + lines2, labels1 + labels2, loc="upper right", fontsize=9)
+
+    plt.tight_layout()
+    plt.savefig(output_path, dpi=150, bbox_inches="tight")
+    print(f"\nFigure saved: {os.path.abspath(output_path)}")
+    plt.close()
