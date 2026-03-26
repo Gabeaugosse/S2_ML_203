@@ -213,21 +213,57 @@ In order to test a learning agent, we implemented a set of strategies to play ag
 \section{The Q-Learning Model}
 \label{sec:qlearning}
 
+\subsection{Model selection for the Iterated Prisoner's Dilemma}
 
-\subsection{Justification of choice}
+The Iterated Prisoner's Dilemma (IPD) can be analysed not only through the lens of classical
+game theory, but also as a reinforcement learning (RL) problem. At each step of the game, an
+agent observes the current state of the environment and receives a reward based on the outcome
+of the interaction. The goal of the agent is to learn, over time, a \textit{policy} (which is a
+strategy that maps states to actions) that maximises its cumulative reward. This framing
+naturally calls for an RL approach.
 
-We wanted to analyse the Prisoner's Dilemma from a different perspective than the one of game theory. As part of the game theory, this obvioulsy a game. As such,
-an agent at each state of the game will earn a reward. From a machine learning perspective, this is a reinforcement learning problem. 
-Therefore, we could chose between different RL algorithms (SARSA, Deep Q-Network etc.). We chose Q-learning because it is a simple and efficient algorithm that can be used to solve this problem.\\
+Among the available RL algorithms, three natural candidates arise: SARSA, Q-Learning, and Deep
+Q-Networks (DQN). We argue that Q-Learning is the most appropriate choice here, for the
+following reasons.
 
-Indeed, SARSA is an on-policy algorithm, which converges to a different policy under continuous exploration; it is less suitable here since we wish to evaluate the optimal policy. On the other hand, Deep Q-Network is a more complex algorithm that requires more data to train. Here, the space is minimal, so we don't need to use a neural network to approximate the Q-values.\\
+\paragraph{On-policy vs.\ off-policy learning.}
+A key distinction in RL is between \textit{on-policy} and \textit{off-policy}
+algorithms. 
+An on-policy algorithm, such as SARSA, learns the value of the policy it is
+currently following, including all its exploratory moves. In other words, if the agent
+sometimes acts randomly to explore its environment, SARSA will account for that randomness in
+what it learns. This means that the learned policy reflects a \textit{mixture} of optimal and
+exploratory behaviour. 
+An off-policy algorithm, such as Q-Learning, instead learns the value
+of the \textit{best possible action} at each state, regardless of what the agent actually does
+during training. Exploration is used purely as a means to gather information, but the learned
+policy is always the greedy, optimal one. 
+
+In the context of the IPD, where the objective is to identify the optimal long-term strategy
+against an opponent, off-policy learning is clearly preferable.
+We want to evaluate what the agent \textit{should} do, not what it does while exploring.
+
+Note that DQN extends Q-Learning by using a neural network to approximate the Q-value function, which
+makes it powerful in environments with large or continuous state spaces. However, this added complexity comes at a cost.
+Neural networks require significant amounts of data and computational resources to train, and introduce instability. 
+In the IPD, the state space is minimal as it is reduced to each player's last action. Therefore, only
+a handful of discrete states exist. A simple tabular Q-table is not only sufficient but also more
+transparent, more efficient, and easier to analyse.
 
 
-Regarding the IDP and the Q-learning algorithm, we make the following assumptions:
+To summarise, Q-Learning is the most appropriate algorithm here, based on our assumptions:
 \begin{itemize}
-  \item \textbf{Suitability for discrete spaces}: the IPD has a finite, discrete state space (the memory is reduced to each player's last action) making the tabular representation (q-table) efficient.
-  \item \textbf{Off-policy}: the agent can learn the optimal policy even while exploring, which is relevant for the IPD where exploration allows testing the opponent's reactions.
-  \item \textbf{Guaranteed convergence} under standard conditions.
+    \item \textbf{Discrete and finite state space:} the IPD's state space (each player's last
+    action) is small and discrete, making the tabular Q-table both exact and computationally
+    lightweight.
+
+    \item \textbf{Off-policy learning:} the agent learns the optimal policy even while
+    exploring, allowing it to probe the opponent's reactions without compromising the quality
+    of the learned strategy.
+
+    \item \textbf{Guaranteed convergence:} under standard conditions (sufficient exploration
+    and a decaying learning rate), Q-Learning is proven to converge to the optimal Q-values,
+    providing a theoretically sound foundation for our analysis.
 \end{itemize}
 
 \subsection{Mathematical formulation}
